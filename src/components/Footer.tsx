@@ -1,5 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Footer() {
   return (
@@ -40,16 +40,12 @@ export default function Footer() {
             </a>
           </div>
 
-          {/* Right section - Logo */}
+          {/* Right section - Logo placeholder (needs cream/white logo export) */}
           <div className="flex items-center">
-            <Link href="/">
-              <Image
-                src="/logo.svg"
-                alt="Two Makers Co"
-                width={100}
-                height={50}
-                className="brightness-0 invert"
-              />
+            <Link href="/" className="text-cream hover:opacity-80 transition-opacity">
+              <div className="w-20 h-20 rounded-full border-2 border-cream flex items-center justify-center">
+                <span className="text-xs text-center font-semibold leading-tight">TWO<br/>MAKERS</span>
+              </div>
             </Link>
           </div>
         </div>

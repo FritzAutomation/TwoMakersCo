@@ -4,7 +4,7 @@ import Link from "next/link";
 export default function Header() {
   return (
     <header className="bg-cream">
-      <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+      <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 h-20 relative">
         {/* Left nav */}
         <div className="flex items-center gap-8">
           <Link
@@ -34,13 +34,14 @@ export default function Header() {
         </div>
 
         {/* Center logo */}
-        <Link href="/" className="absolute left-1/2 -translate-x-1/2">
+        <Link href="/" className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2">
           <Image
             src="/logo.svg"
             alt="Two Makers Co"
-            width={120}
-            height={60}
+            width={100}
+            height={80}
             priority
+            className="h-auto"
           />
         </Link>
 

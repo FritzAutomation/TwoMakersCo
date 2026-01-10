@@ -33,8 +33,23 @@ export default function ProductCard({
             className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
         ) : (
-          <div className="h-full w-full bg-gradient-to-br from-green-200 to-green-400 flex items-center justify-center">
-            <span className="text-brown/30 text-sm">Product Image</span>
+          <div className="h-full w-full relative overflow-hidden">
+            {/* Sky */}
+            <div className="absolute inset-0 bg-gradient-to-b from-sky-200 via-sky-100 to-transparent" />
+            {/* Clouds */}
+            <div className="absolute top-4 left-8 w-16 h-6 bg-white/80 rounded-full blur-sm" />
+            <div className="absolute top-6 left-16 w-12 h-4 bg-white/60 rounded-full blur-sm" />
+            <div className="absolute top-3 right-12 w-14 h-5 bg-white/70 rounded-full blur-sm" />
+            {/* Hills */}
+            <div className="absolute bottom-0 left-0 right-0 h-3/4">
+              <div className="absolute bottom-0 left-[-20%] w-[70%] h-full bg-green-400 rounded-t-full" />
+              <div className="absolute bottom-0 right-[-10%] w-[60%] h-[90%] bg-green-500 rounded-t-full" />
+              <div className="absolute bottom-0 left-[20%] w-[80%] h-[70%] bg-green-300 rounded-t-full" />
+            </div>
+            {/* Label */}
+            <span className="absolute inset-0 flex items-center justify-center text-white/50 text-sm font-medium">
+              Product Image
+            </span>
           </div>
         )}
       </div>
