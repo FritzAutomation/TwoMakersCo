@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import CartIcon from "./CartIcon";
-import WishlistIcon from "./WishlistIcon";
 import UserMenu from "./UserMenu";
 import MobileNav from "./MobileNav";
 
@@ -78,13 +77,11 @@ export default function Header() {
               <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
             </svg>
           </a>
-          <WishlistIcon />
           <CartIcon />
         </div>
 
         {/* Mobile: Cart + Hamburger */}
         <div className="flex lg:hidden items-center gap-4">
-          <WishlistIcon />
           <CartIcon />
           <MobileNav />
         </div>
