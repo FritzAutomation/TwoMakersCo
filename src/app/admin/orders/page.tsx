@@ -45,75 +45,125 @@ export default async function AdminOrdersPage() {
           <p className="text-16 text-gray-600">No orders yet</p>
         </div>
       ) : (
-        <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-          <table className="w-full">
-            <thead className="bg-gray-50 border-b">
-              <tr>
-                <th className="text-left px-6 py-3 text-14 font-semibold text-gray-600">
-                  Order
-                </th>
-                <th className="text-left px-6 py-3 text-14 font-semibold text-gray-600">
-                  Customer
-                </th>
-                <th className="text-left px-6 py-3 text-14 font-semibold text-gray-600">
-                  Date
-                </th>
-                <th className="text-left px-6 py-3 text-14 font-semibold text-gray-600">
-                  Status
-                </th>
-                <th className="text-right px-6 py-3 text-14 font-semibold text-gray-600">
-                  Total
-                </th>
-                <th className="text-right px-6 py-3 text-14 font-semibold text-gray-600">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y">
-              {orders.map((order) => (
-                <tr key={order.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4">
+        <>
+          {/* Mobile Cards */}
+          <div className="md:hidden space-y-4">
+            {orders.map((order) => (
+              <div key={order.id} className="bg-white rounded-lg shadow-sm p-4">
+                <div className="flex items-start justify-between mb-3">
+                  <div>
                     <p className="text-14 font-mono text-brown">
                       #{order.id.slice(0, 8).toUpperCase()}
+                    </p>
+                    <p className="text-16 font-medium text-brown mt-1">
+                      {order.shipping_name}
+                    </p>
+                    <p className="text-14 text-gray-500">{order.email}</p>
+                  </div>
+                  <span
+                    className={`inline-flex items-center px-2 py-1 rounded-full text-12 font-medium capitalize ${getStatusColor(
+                      order.status
+                    )}`}
+                  >
+                    {order.status}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+                  <div>
+                    <p className="text-14 text-gray-500">
+                      {formatDate(order.created_at)}
                     </p>
                     <p className="text-14 text-gray-500">
                       {order.order_items?.length || 0} items
                     </p>
-                  </td>
-                  <td className="px-6 py-4">
-                    <p className="text-16 text-brown">{order.shipping_name}</p>
-                    <p className="text-14 text-gray-500">{order.email}</p>
-                  </td>
-                  <td className="px-6 py-4 text-14 text-gray-600">
-                    {formatDate(order.created_at)}
-                  </td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`inline-flex items-center px-2 py-1 rounded-full text-12 font-medium capitalize ${getStatusColor(
-                        order.status
-                      )}`}
-                    >
-                      {order.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <p className="text-16 font-medium text-brown">
+                  </div>
+                  <div className="text-right">
+                    <p className="text-16 font-semibold text-brown">
                       {formatPrice(order.total)}
                     </p>
-                  </td>
-                  <td className="px-6 py-4 text-right">
                     <Link
                       href={`/admin/orders/${order.id}`}
                       className="text-14 text-blue-600 hover:underline"
                     >
                       View Details
                     </Link>
-                  </td>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop Table */}
+          <div className="hidden md:block bg-white rounded-lg shadow-sm overflow-hidden">
+            <table className="w-full">
+              <thead className="bg-gray-50 border-b">
+                <tr>
+                  <th className="text-left px-6 py-3 text-14 font-semibold text-gray-600">
+                    Order
+                  </th>
+                  <th className="text-left px-6 py-3 text-14 font-semibold text-gray-600">
+                    Customer
+                  </th>
+                  <th className="text-left px-6 py-3 text-14 font-semibold text-gray-600">
+                    Date
+                  </th>
+                  <th className="text-left px-6 py-3 text-14 font-semibold text-gray-600">
+                    Status
+                  </th>
+                  <th className="text-right px-6 py-3 text-14 font-semibold text-gray-600">
+                    Total
+                  </th>
+                  <th className="text-right px-6 py-3 text-14 font-semibold text-gray-600">
+                    Actions
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="divide-y">
+                {orders.map((order) => (
+                  <tr key={order.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4">
+                      <p className="text-14 font-mono text-brown">
+                        #{order.id.slice(0, 8).toUpperCase()}
+                      </p>
+                      <p className="text-14 text-gray-500">
+                        {order.order_items?.length || 0} items
+                      </p>
+                    </td>
+                    <td className="px-6 py-4">
+                      <p className="text-16 text-brown">{order.shipping_name}</p>
+                      <p className="text-14 text-gray-500">{order.email}</p>
+                    </td>
+                    <td className="px-6 py-4 text-14 text-gray-600">
+                      {formatDate(order.created_at)}
+                    </td>
+                    <td className="px-6 py-4">
+                      <span
+                        className={`inline-flex items-center px-2 py-1 rounded-full text-12 font-medium capitalize ${getStatusColor(
+                          order.status
+                        )}`}
+                      >
+                        {order.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <p className="text-16 font-medium text-brown">
+                        {formatPrice(order.total)}
+                      </p>
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <Link
+                        href={`/admin/orders/${order.id}`}
+                        className="text-14 text-blue-600 hover:underline"
+                      >
+                        View Details
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
       )}
     </div>
   );

@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 
 export default function MobileNav() {
   const [isOpen, setIsOpen] = useState(false);
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const { itemCount } = useCart();
   const router = useRouter();
 
@@ -148,17 +148,26 @@ export default function MobileNav() {
 
             <div className="border-t border-brown/20 pt-6">
               {user ? (
-                <>
-                  <p className="text-16 text-brown/70 mb-4">
+                <div className="space-y-4">
+                  <p className="text-16 text-brown/70">
                     Hi, {user.user_metadata?.name || user.email?.split("@")[0]}
                   </p>
+                  {isAdmin && (
+                    <Link
+                      href="/admin"
+                      onClick={closeMenu}
+                      className="text-22 text-brown font-medium block hover:opacity-80"
+                    >
+                      Admin Dashboard
+                    </Link>
+                  )}
                   <button
                     onClick={handleSignOut}
                     className="text-22 text-brown font-medium hover:opacity-80"
                   >
                     Logout
                   </button>
-                </>
+                </div>
               ) : (
                 <Link
                   href="/login"

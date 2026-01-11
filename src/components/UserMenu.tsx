@@ -6,7 +6,7 @@ import { useAuth } from "@/context/AuthContext";
 import { signOut } from "@/lib/supabase/auth";
 
 export default function UserMenu() {
-  const { user, loading } = useAuth();
+  const { user, isAdmin, loading } = useAuth();
   const router = useRouter();
 
   const handleSignOut = async () => {
@@ -29,6 +29,14 @@ export default function UserMenu() {
         <span className="text-18 text-brown font-medium">
           Hi, {displayName}
         </span>
+        {isAdmin && (
+          <Link
+            href="/admin"
+            className="text-18 text-brown font-medium hover:opacity-80 transition-opacity"
+          >
+            Admin
+          </Link>
+        )}
         <button
           onClick={handleSignOut}
           className="text-18 text-brown font-medium hover:opacity-80 transition-opacity"
