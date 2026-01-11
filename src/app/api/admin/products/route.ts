@@ -1,0 +1,63 @@
+import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
+import { isAdmin } from "@/lib/supabase/admin";
+
+export async function POST(request: NextRequest) {
+  try {
+    // Check admin access
+    const adminAccess = await isAdmin();
+    if (!adminAccess) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const body = await request.json();
+    const { name, slug, description, details, price, image_url, is_featured, stock } = body;
+
+    // Validate required fields
+    if (!name || !slug || !price) {
+      return NextResponse.json(
+        { error: "Name, slug, and price are required" },
+        { status: 400 }
+      );
+    }
+
+    const supabase = await createClient();
+
+    const { data, error } = await supabase
+      .from("products")
+      .insert({
+        name,
+        slug,
+        description,
+        details,
+        price,
+        image_url,
+        is_featured: is_featured || false,
+        stock: stock || 0,
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error("Error creating product:", error);
+      if (error.code === "23505") {
+        return NextResponse.json(
+          { error: "A product with this slug already exists" },
+          { status: 400 }
+        );
+      }
+      return NextResponse.json(
+        { error: "Failed to create product" },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({ success: true, product: data });
+  } catch (error) {
+    console.error("Product creation error:", error);
+    return NextResponse.json(
+      { error: "Failed to create product" },
+      { status: 500 }
+    );
+  }
+}

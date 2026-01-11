@@ -1,58 +1,59 @@
 import Image from "next/image";
 import Link from "next/link";
+import CartIcon from "./CartIcon";
+import UserMenu from "./UserMenu";
+import MobileNav from "./MobileNav";
 
 export default function Header() {
   return (
-    <header className="bg-cream">
-      <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 h-20 relative">
-        {/* Left nav */}
-        <div className="flex items-center gap-8">
+    <header className="bg-cream pt-4 lg:pt-8">
+      <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 lg:px-6 h-24 lg:h-40 relative">
+        {/* Left nav - hidden on mobile */}
+        <div className="hidden lg:flex items-center gap-8">
           <Link
             href="/"
-            className="text-brown font-medium hover:opacity-80 transition-opacity"
+            className="text-22 text-brown font-medium hover:opacity-80 transition-opacity"
           >
             Home
           </Link>
           <Link
             href="/shop"
-            className="text-brown font-medium hover:opacity-80 transition-opacity"
+            className="text-22 text-brown font-medium hover:opacity-80 transition-opacity"
           >
             Shop
           </Link>
           <Link
             href="/about"
-            className="text-brown font-medium hover:opacity-80 transition-opacity"
+            className="text-22 text-brown font-medium hover:opacity-80 transition-opacity"
           >
             About
           </Link>
           <Link
             href="/contact"
-            className="text-brown font-medium hover:opacity-80 transition-opacity"
+            className="text-22 text-brown font-medium hover:opacity-80 transition-opacity"
           >
             Contact
           </Link>
         </div>
 
-        {/* Center logo */}
-        <Link href="/" className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2">
+        {/* Logo - left on mobile, center on desktop */}
+        <Link
+          href="/"
+          className="lg:absolute lg:left-1/2 lg:-translate-x-1/2 lg:top-1/2 lg:-translate-y-1/2"
+        >
           <Image
-            src="/logo.svg"
+            src="/logo.png"
             alt="Two Makers Co"
-            width={100}
-            height={80}
+            width={200}
+            height={200}
             priority
-            className="h-auto"
+            className="h-auto w-[120px] lg:w-[200px]"
           />
         </Link>
 
-        {/* Right nav */}
-        <div className="flex items-center gap-6">
-          <Link
-            href="/login"
-            className="text-brown font-medium hover:opacity-80 transition-opacity"
-          >
-            Login
-          </Link>
+        {/* Right nav - hidden on mobile */}
+        <div className="hidden lg:flex items-center gap-6">
+          <UserMenu />
           <a
             href="https://www.instagram.com/twomakersco"
             target="_blank"
@@ -62,8 +63,8 @@ export default function Header() {
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
+              width="32"
+              height="32"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -76,27 +77,13 @@ export default function Header() {
               <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
             </svg>
           </a>
-          <Link
-            href="/cart"
-            className="text-brown hover:opacity-80 transition-opacity flex items-center gap-1"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
-              <path d="M3 6h18" />
-              <path d="M16 10a4 4 0 0 1-8 0" />
-            </svg>
-            <span className="text-sm">0</span>
-          </Link>
+          <CartIcon />
+        </div>
+
+        {/* Mobile: Cart + Hamburger */}
+        <div className="flex lg:hidden items-center gap-4">
+          <CartIcon />
+          <MobileNav />
         </div>
       </nav>
     </header>

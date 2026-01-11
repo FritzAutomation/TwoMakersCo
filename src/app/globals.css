@@ -13,6 +13,17 @@
   --color-brown: #4f3c32;
   --color-cream: #fbf7f0;
   --font-sans: var(--font-montserrat);
+
+  /* Custom font sizes to match style guide (pt values) */
+  --font-size-14: 0.875rem;   /* 14pt */
+  --font-size-16: 1rem;       /* 16pt */
+  --font-size-17: 1.0625rem;  /* 17pt */
+  --font-size-18: 1.125rem;   /* 18pt */
+  --font-size-19: 1.1875rem;  /* 19pt */
+  --font-size-22: 1.375rem;   /* 22pt */
+  --font-size-27: 1.6875rem;  /* 27pt */
+  --font-size-31: 1.9375rem;  /* 31pt */
+  --font-size-35: 2.1875rem;  /* 35pt */
 }
 
 body {
@@ -20,3 +31,14 @@ body {
   color: var(--foreground);
   font-family: var(--font-montserrat), sans-serif;
 }
+
+/* Custom text size utilities */
+.text-14 { font-size: var(--font-size-14); }
+.text-16 { font-size: var(--font-size-16); }
+.text-17 { font-size: var(--font-size-17); }
+.text-18 { font-size: var(--font-size-18); }
+.text-19 { font-size: var(--font-size-19); }
+.text-22 { font-size: var(--font-size-22); }
+.text-27 { font-size: var(--font-size-27); }
+.text-31 { font-size: var(--font-size-31); }
+.text-35 { font-size: var(--font-size-35); }

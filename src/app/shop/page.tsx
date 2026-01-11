@@ -1,16 +1,8 @@
 import ProductCard from "@/components/ProductCard";
+import { getAllProducts } from "@/lib/supabase/products";
 
-// Placeholder products - will be replaced with Supabase data
-const products = [
-  { id: "1", name: "Product Name", price: 2500, slug: "product-1" },
-  { id: "2", name: "Product Name", price: 3000, slug: "product-2" },
-  { id: "3", name: "Product Name", price: 1500, slug: "product-3" },
-  { id: "4", name: "Product Name", price: 2000, slug: "product-4" },
-  { id: "5", name: "Product Name", price: 3500, slug: "product-5" },
-  { id: "6", name: "Product Name", price: 1800, slug: "product-6" },
-];
-
-export default function ShopPage() {
+export default async function ShopPage() {
+  const products = await getAllProducts();
   return (
     <div className="bg-cream min-h-screen">
       <div className="mx-auto max-w-7xl px-6 py-12">
@@ -23,6 +15,7 @@ export default function ShopPage() {
               name={product.name}
               price={product.price}
               slug={product.slug}
+              variant="shop"
             />
           ))}
         </div>

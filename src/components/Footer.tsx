@@ -8,10 +8,10 @@ export default function Footer() {
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           {/* Left section */}
           <div className="flex flex-col items-center md:items-start gap-2">
-            <h3 className="font-extrabold text-lg">Two Makers Company</h3>
+            <h3 className="text-27 font-extrabold">Two Makers Company</h3>
             <a
               href="mailto:twomakerscompany@gmail.com"
-              className="hover:underline"
+              className="text-19 font-normal hover:underline"
             >
               twomakerscompany@gmail.com
             </a>
@@ -24,8 +24,8 @@ export default function Footer() {
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
+                width="32"
+                height="32"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -40,12 +40,15 @@ export default function Footer() {
             </a>
           </div>
 
-          {/* Right section - Logo placeholder (needs cream/white logo export) */}
+          {/* Right section - Logo */}
           <div className="flex items-center">
-            <Link href="/" className="text-cream hover:opacity-80 transition-opacity">
-              <div className="w-20 h-20 rounded-full border-2 border-cream flex items-center justify-center">
-                <span className="text-xs text-center font-semibold leading-tight">TWO<br/>MAKERS</span>
-              </div>
+            <Link href="/" className="hover:opacity-80 transition-opacity">
+              <Image
+                src="/logo.png"
+                alt="Two Makers Co"
+                width={150}
+                height={150}
+              />
             </Link>
           </div>
         </div>

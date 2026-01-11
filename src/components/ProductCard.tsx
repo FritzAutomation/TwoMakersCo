@@ -5,16 +5,18 @@ interface ProductCardProps {
   id: string;
   name: string;
   price: number;
-  image?: string;
+  image_url?: string | null;
   slug: string;
+  variant?: "featured" | "shop";
 }
 
 export default function ProductCard({
   id,
   name,
   price,
-  image,
+  image_url,
   slug,
+  variant = "featured",
 }: ProductCardProps) {
   const formattedPrice = new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -24,9 +26,9 @@ export default function ProductCard({
   return (
     <Link href={`/shop/${slug}`} className="group block">
       <div className="aspect-square overflow-hidden rounded-lg bg-white border border-brown/10">
-        {image ? (
+        {image_url ? (
           <Image
-            src={image}
+            src={image_url}
             alt={name}
             width={400}
             height={400}
@@ -53,8 +55,12 @@ export default function ProductCard({
           </div>
         )}
       </div>
-      <h3 className="mt-3 text-lg font-semibold text-brown">{name}</h3>
-      <p className="text-brown/80">{formattedPrice}</p>
+      <h3 className={`mt-3 font-semibold text-brown ${variant === "featured" ? "text-18" : "text-19"}`}>
+        {name}
+      </h3>
+      <p className={`text-brown font-normal ${variant === "featured" ? "text-17" : "text-19"}`}>
+        {formattedPrice}
+      </p>
     </Link>
   );
 }
