@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 
 export default function MobileNav() {
   const [isOpen, setIsOpen] = useState(false);
-  const { user, isAdmin } = useAuth();
+  const { user, displayName, isAdmin } = useAuth();
   const { itemCount } = useCart();
   const router = useRouter();
 
@@ -157,7 +157,7 @@ export default function MobileNav() {
               {user ? (
                 <div className="space-y-4">
                   <p className="text-16 text-brown/70">
-                    Hi, {user.user_metadata?.name || user.email?.split("@")[0]}
+                    Hi, {displayName || user.email?.split("@")[0]}
                   </p>
                   {isAdmin && (
                     <Link

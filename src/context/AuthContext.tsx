@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 
 interface AuthContextType {
   user: User | null;
+  displayName: string | null;
   isAdmin: boolean;
   loading: boolean;
 }
@@ -14,19 +15,21 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [displayName, setDisplayName] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const supabase = createClient();
 
-    const checkAdminStatus = async (userId: string) => {
+    const fetchProfile = async (userId: string) => {
       const { data: profile } = await supabase
         .from("profiles")
-        .select("is_admin")
+        .select("name, is_admin")
         .eq("id", userId)
         .single();
 
+      setDisplayName(profile?.name || null);
       setIsAdmin(profile?.is_admin === true);
     };
 
@@ -34,7 +37,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
       if (session?.user) {
-        checkAdminStatus(session.user.id);
+        fetchProfile(session.user.id);
       }
       setLoading(false);
     });
@@ -45,8 +48,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
       if (session?.user) {
-        checkAdminStatus(session.user.id);
+        fetchProfile(session.user.id);
       } else {
+        setDisplayName(null);
         setIsAdmin(false);
       }
     });
@@ -55,7 +59,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, isAdmin, loading }}>
+    <AuthContext.Provider value={{ user, displayName, isAdmin, loading }}>
       {children}
     </AuthContext.Provider>
   );

@@ -6,7 +6,7 @@ import { useAuth } from "@/context/AuthContext";
 import { signOut } from "@/lib/supabase/auth";
 
 export default function UserMenu() {
-  const { user, isAdmin, loading } = useAuth();
+  const { user, displayName, isAdmin, loading } = useAuth();
   const router = useRouter();
 
   const handleSignOut = async () => {
@@ -23,11 +23,11 @@ export default function UserMenu() {
   }
 
   if (user) {
-    const displayName = user.user_metadata?.name || user.email?.split("@")[0] || "User";
+    const name = displayName || user.email?.split("@")[0] || "User";
     return (
       <div className="flex items-center gap-4">
         <span className="text-18 text-brown font-medium">
-          Hi, {displayName}
+          Hi, {name}
         </span>
         {isAdmin && (
           <Link
