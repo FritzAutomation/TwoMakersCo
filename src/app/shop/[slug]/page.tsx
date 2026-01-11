@@ -1,7 +1,9 @@
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { getProductBySlug } from "@/lib/supabase/products";
+import { getProductReviews, getProductRatingStats } from "@/lib/supabase/reviews";
 import ProductDetail from "./ProductDetail";
+import ProductReviews from "@/components/ProductReviews";
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>;
@@ -45,6 +47,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
     notFound();
   }
 
+  const [reviews, ratingStats] = await Promise.all([
+    getProductReviews(product.id),
+    getProductRatingStats(product.id),
+  ]);
+
   const productSchema = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -64,6 +71,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
         name: "Two Makers Co",
       },
     },
+    ...(ratingStats.count > 0 && {
+      aggregateRating: {
+        "@type": "AggregateRating",
+        ratingValue: ratingStats.average,
+        reviewCount: ratingStats.count,
+      },
+    }),
   };
 
   return (
@@ -72,7 +86,17 @@ export default async function ProductPage({ params }: ProductPageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
       />
-      <ProductDetail product={product} />
+      <div className="bg-cream min-h-screen">
+        <ProductDetail product={product} />
+        <div className="mx-auto max-w-7xl px-4 lg:px-6 pb-12">
+          <ProductReviews
+            productId={product.id}
+            reviews={reviews}
+            averageRating={ratingStats.average}
+            reviewCount={ratingStats.count}
+          />
+        </div>
+      </div>
     </>
   );
 }

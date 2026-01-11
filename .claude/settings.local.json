@@ -1,0 +1,36 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run dev:*)",
+      "Bash(npx next dev)",
+      "mcp__plugin_supabase_supabase__list_projects",
+      "mcp__plugin_supabase_supabase__get_cost",
+      "mcp__plugin_supabase_supabase__confirm_cost",
+      "mcp__plugin_supabase_supabase__create_project",
+      "mcp__plugin_supabase_supabase__get_project",
+      "Bash(timeout /t 10 /nobreak)",
+      "Bash(ping:*)",
+      "mcp__plugin_supabase_supabase__get_project_url",
+      "mcp__plugin_supabase_supabase__get_publishable_keys",
+      "mcp__plugin_supabase_supabase__apply_migration",
+      "Bash(dir \"C:\\\\Users\\\\Joshua\\\\Desktop\\\\Josh\\\\Python\\\\TwoMakersCo\\\\src\\\\app\\\\shop\")",
+      "Bash(dir:*)",
+      "mcp__plugin_supabase_supabase__execute_sql",
+      "mcp__plugin_supabase_supabase__search_docs",
+      "Bash(timeout /t 3 /nobreak)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nAdd complete e-commerce functionality\n\nFeatures:\n- User authentication with Supabase \\(login, signup, email confirmation\\)\n- Shopping cart with context-based state management\n- Checkout flow with Square payment integration\n- Order confirmation page\n\nAdmin Panel:\n- Dashboard with stats overview\n- Products management \\(CRUD, image upload to Supabase Storage\\)\n- Orders management with status updates\n- Customer management \\(registered users and guest checkouts\\)\n\nUI Components:\n- Mobile navigation\n- User menu with auth state\n- Cart icon with item count\n- Product detail page with quantity selector\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git push:*)",
+      "Bash(npm install:*)",
+      "Bash(vercel --version:*)",
+      "Bash(vercel)",
+      "Bash(vercel login:*)",
+      "Bash(vercel --yes)",
+      "Bash(vercel:*)",
+      "Bash(git add:*)",
+      "Bash(git reset:*)",
+      "Bash(git commit:*)",
+      "mcp__plugin_supabase_supabase__list_tables",
+      "Bash(npm run build:*)"
+    ]
+  }
+}

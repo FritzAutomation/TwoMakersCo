@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { getCategories } from "@/lib/supabase/products";
 import ProductForm from "../ProductForm";
 
 interface EditProductPageProps {
@@ -11,11 +12,10 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
 
   const supabase = await createClient();
 
-  const { data: product, error } = await supabase
-    .from("products")
-    .select("*")
-    .eq("id", id)
-    .single();
+  const [{ data: product, error }, categories] = await Promise.all([
+    supabase.from("products").select("*").eq("id", id).single(),
+    getCategories(),
+  ]);
 
   if (error || !product) {
     notFound();
@@ -25,7 +25,7 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
     <div>
       <h1 className="text-27 font-bold text-brown mb-8">Edit Product</h1>
       <div className="bg-white rounded-lg p-6 shadow-sm">
-        <ProductForm product={product} />
+        <ProductForm product={product} categories={categories} />
       </div>
     </div>
   );

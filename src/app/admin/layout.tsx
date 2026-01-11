@@ -50,6 +50,12 @@ export default async function AdminLayout({
                 >
                   Orders
                 </Link>
+                <Link
+                  href="/admin/reviews"
+                  className="text-16 hover:opacity-80 transition-opacity"
+                >
+                  Reviews
+                </Link>
               </nav>
             </div>
             <div className="flex items-center gap-4">
@@ -65,15 +71,18 @@ export default async function AdminLayout({
       </header>
 
       {/* Mobile Nav */}
-      <nav className="md:hidden bg-brown/90 text-cream px-4 py-2 flex gap-4">
-        <Link href="/admin/products" className="text-14 hover:opacity-80">
+      <nav className="md:hidden bg-brown/90 text-cream px-4 py-2 flex gap-4 overflow-x-auto">
+        <Link href="/admin/products" className="text-14 hover:opacity-80 whitespace-nowrap">
           Products
         </Link>
-        <Link href="/admin/customers" className="text-14 hover:opacity-80">
+        <Link href="/admin/customers" className="text-14 hover:opacity-80 whitespace-nowrap">
           Customers
         </Link>
-        <Link href="/admin/orders" className="text-14 hover:opacity-80">
+        <Link href="/admin/orders" className="text-14 hover:opacity-80 whitespace-nowrap">
           Orders
+        </Link>
+        <Link href="/admin/reviews" className="text-14 hover:opacity-80 whitespace-nowrap">
+          Reviews
         </Link>
       </nav>
 

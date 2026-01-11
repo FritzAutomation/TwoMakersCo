@@ -6,7 +6,9 @@ interface ProductCardProps {
   name: string;
   price: number;
   image_url?: string | null;
+  imageUrl?: string | null;
   slug: string;
+  category?: string | null;
   variant?: "featured" | "shop";
   priority?: boolean;
 }
@@ -15,10 +17,13 @@ export default function ProductCard({
   name,
   price,
   image_url,
+  imageUrl,
   slug,
+  category,
   variant = "featured",
   priority = false,
 }: ProductCardProps) {
+  const productImage = imageUrl || image_url;
   const formattedPrice = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
@@ -27,9 +32,9 @@ export default function ProductCard({
   return (
     <Link href={`/shop/${slug}`} className="group block">
       <div className="aspect-square overflow-hidden rounded-lg bg-white border border-brown/10">
-        {image_url ? (
+        {productImage ? (
           <Image
-            src={image_url}
+            src={productImage}
             alt={name}
             width={400}
             height={400}
@@ -58,7 +63,10 @@ export default function ProductCard({
           </div>
         )}
       </div>
-      <h3 className={`mt-3 font-semibold text-brown ${variant === "featured" ? "text-18" : "text-19"}`}>
+      {category && (
+        <p className="mt-2 text-14 text-brown/60 font-medium">{category}</p>
+      )}
+      <h3 className={`${category ? "mt-1" : "mt-3"} font-semibold text-brown ${variant === "featured" ? "text-18" : "text-19"}`}>
         {name}
       </h3>
       <p className={`text-brown font-normal ${variant === "featured" ? "text-17" : "text-19"}`}>

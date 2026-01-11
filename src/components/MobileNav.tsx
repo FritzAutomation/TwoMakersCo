@@ -131,7 +131,14 @@ export default function MobileNav() {
               Contact
             </Link>
 
-            <div className="border-t border-brown/20 pt-6">
+            <div className="border-t border-brown/20 pt-6 space-y-4">
+              <Link
+                href="/wishlist"
+                onClick={closeMenu}
+                className="text-22 text-brown font-medium flex items-center gap-2 hover:opacity-80"
+              >
+                Wishlist
+              </Link>
               <Link
                 href="/cart"
                 onClick={closeMenu}

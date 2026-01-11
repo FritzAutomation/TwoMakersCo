@@ -5,6 +5,12 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 
+interface Category {
+  id: string;
+  name: string;
+  slug: string;
+}
+
 interface ProductFormProps {
   product?: {
     id: string;
@@ -16,10 +22,12 @@ interface ProductFormProps {
     image_url: string | null;
     is_featured: boolean;
     stock: number;
+    category_id: string | null;
   };
+  categories?: Category[];
 }
 
-export default function ProductForm({ product }: ProductFormProps) {
+export default function ProductForm({ product, categories = [] }: ProductFormProps) {
   const router = useRouter();
   const isEdit = !!product;
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -37,6 +45,7 @@ export default function ProductForm({ product }: ProductFormProps) {
     image_url: product?.image_url || "",
     is_featured: product?.is_featured || false,
     stock: product?.stock?.toString() || "0",
+    category_id: product?.category_id || "",
   });
 
   const generateSlug = (name: string) => {
@@ -56,7 +65,7 @@ export default function ProductForm({ product }: ProductFormProps) {
   };
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value, type } = e.target;
     const checked = (e.target as HTMLInputElement).checked;
@@ -120,6 +129,7 @@ export default function ProductForm({ product }: ProductFormProps) {
         image_url: form.image_url || null,
         is_featured: form.is_featured,
         stock: parseInt(form.stock) || 0,
+        category_id: form.category_id || null,
       };
 
       const url = isEdit
@@ -188,6 +198,29 @@ export default function ProductForm({ product }: ProductFormProps) {
         <p className="text-14 text-gray-500 mt-1">
           Used in the URL: /shop/{form.slug || "your-slug"}
         </p>
+      </div>
+
+      <div>
+        <label
+          htmlFor="category_id"
+          className="block text-16 font-medium text-brown mb-2"
+        >
+          Category
+        </label>
+        <select
+          id="category_id"
+          name="category_id"
+          value={form.category_id}
+          onChange={handleChange}
+          className="w-full px-4 py-3 rounded border border-gray-300 focus:outline-none focus:border-brown"
+        >
+          <option value="">No category</option>
+          {categories.map((category) => (
+            <option key={category.id} value={category.id}>
+              {category.name}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div className="grid grid-cols-2 gap-4">

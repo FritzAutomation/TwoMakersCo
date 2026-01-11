@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
+import WishlistButton from "@/components/WishlistButton";
 import type { Product } from "@/lib/supabase/products";
 
 interface ProductDetailProps {
@@ -38,7 +39,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
   const inStock = product.stock > 0;
 
   return (
-    <div className="bg-cream min-h-screen">
+    <div>
       <div className="mx-auto max-w-7xl px-4 lg:px-6 py-8 lg:py-12">
         <Link
           href="/shop"
@@ -143,6 +144,14 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                 >
                   {added ? "Added to Cart!" : "Add to Cart"}
                 </button>
+
+                <WishlistButton productId={product.id} variant="button" />
+              </div>
+            )}
+
+            {!inStock && (
+              <div className="mb-6">
+                <WishlistButton productId={product.id} variant="button" />
               </div>
             )}
 
