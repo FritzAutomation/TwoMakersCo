@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { isAdmin } from '@/lib/supabase/admin';
+import sharp from 'sharp';
+
+const MAX_WIDTH = 1200;
+const MAX_HEIGHT = 1200;
+const QUALITY = 80;
 
 export async function POST(request: NextRequest) {
   try {
@@ -26,29 +31,51 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
+    // Validate file size (max 10MB before compression)
+    if (file.size > 10 * 1024 * 1024) {
       return NextResponse.json(
-        { error: 'File too large. Maximum size is 5MB.' },
+        { error: 'File too large. Maximum size is 10MB.' },
         { status: 400 }
       );
     }
 
     const supabase = await createClient();
 
-    // Generate unique filename
+    // Generate unique filename (always save as webp for optimization)
     const timestamp = Date.now();
-    const extension = file.name.split('.').pop();
-    const filename = `product-${timestamp}.${extension}`;
+    const filename = `product-${timestamp}.webp`;
 
-    // Convert File to ArrayBuffer then to Buffer for upload
+    // Convert File to ArrayBuffer then to Buffer
     const arrayBuffer = await file.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
+    const inputBuffer = Buffer.from(arrayBuffer);
+
+    // Optimize image with sharp
+    let optimizedBuffer: Buffer;
+
+    if (file.type === 'image/gif') {
+      // For GIFs, just resize without converting to preserve animation
+      optimizedBuffer = await sharp(inputBuffer, { animated: true })
+        .resize(MAX_WIDTH, MAX_HEIGHT, {
+          fit: 'inside',
+          withoutEnlargement: true,
+        })
+        .webp({ quality: QUALITY })
+        .toBuffer();
+    } else {
+      // For other formats, resize and convert to webp
+      optimizedBuffer = await sharp(inputBuffer)
+        .resize(MAX_WIDTH, MAX_HEIGHT, {
+          fit: 'inside',
+          withoutEnlargement: true,
+        })
+        .webp({ quality: QUALITY })
+        .toBuffer();
+    }
 
     const { data, error } = await supabase.storage
       .from('product-images')
-      .upload(filename, buffer, {
-        contentType: file.type,
+      .upload(filename, optimizedBuffer, {
+        contentType: 'image/webp',
         upsert: false,
       });
 
@@ -65,7 +92,14 @@ export async function POST(request: NextRequest) {
       .from('product-images')
       .getPublicUrl(data.path);
 
-    return NextResponse.json({ url: urlData.publicUrl });
+    return NextResponse.json({
+      url: urlData.publicUrl,
+      optimized: {
+        originalSize: file.size,
+        optimizedSize: optimizedBuffer.length,
+        savings: Math.round((1 - optimizedBuffer.length / file.size) * 100) + '%'
+      }
+    });
   } catch (error) {
     console.error('Upload error:', error);
     return NextResponse.json(

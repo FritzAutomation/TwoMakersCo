@@ -55,6 +55,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                 alt={product.name}
                 width={600}
                 height={600}
+                sizes="(max-width: 1024px) 100vw, 50vw"
                 className="h-full w-full object-cover"
                 priority
               />

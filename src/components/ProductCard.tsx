@@ -8,15 +8,16 @@ interface ProductCardProps {
   image_url?: string | null;
   slug: string;
   variant?: "featured" | "shop";
+  priority?: boolean;
 }
 
 export default function ProductCard({
-  id,
   name,
   price,
   image_url,
   slug,
   variant = "featured",
+  priority = false,
 }: ProductCardProps) {
   const formattedPrice = new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -32,6 +33,8 @@ export default function ProductCard({
             alt={name}
             width={400}
             height={400}
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            priority={priority}
             className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
         ) : (
