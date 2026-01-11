@@ -20,6 +20,7 @@ interface ProductFormProps {
     details: string | null;
     price: number;
     image_url: string | null;
+    images: string[] | null;
     is_featured: boolean;
     stock: number;
     category_id: string | null;
@@ -31,9 +32,11 @@ export default function ProductForm({ product, categories = [] }: ProductFormPro
   const router = useRouter();
   const isEdit = !!product;
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const additionalFileInputRef = useRef<HTMLInputElement>(null);
 
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [uploadingAdditional, setUploadingAdditional] = useState(false);
   const [error, setError] = useState("");
 
   const [form, setForm] = useState({
@@ -43,6 +46,7 @@ export default function ProductForm({ product, categories = [] }: ProductFormPro
     details: product?.details || "",
     price: product ? (product.price / 100).toFixed(2) : "",
     image_url: product?.image_url || "",
+    images: product?.images || [],
     is_featured: product?.is_featured || false,
     stock: product?.stock?.toString() || "0",
     category_id: product?.category_id || "",
@@ -76,6 +80,24 @@ export default function ProductForm({ product, categories = [] }: ProductFormPro
     }));
   };
 
+  const uploadImage = async (file: File): Promise<string | null> => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await fetch("/api/admin/upload", {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Failed to upload image");
+    }
+
+    return data.url;
+  };
+
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -84,21 +106,10 @@ export default function ProductForm({ product, categories = [] }: ProductFormPro
     setError("");
 
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-
-      const response = await fetch("/api/admin/upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to upload image");
+      const url = await uploadImage(file);
+      if (url) {
+        setForm((prev) => ({ ...prev, image_url: url }));
       }
-
-      setForm((prev) => ({ ...prev, image_url: data.url }));
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : "Upload failed";
       setError(errorMessage);
@@ -107,11 +118,54 @@ export default function ProductForm({ product, categories = [] }: ProductFormPro
     }
   };
 
+  const handleAdditionalImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setUploadingAdditional(true);
+    setError("");
+
+    try {
+      const uploadPromises = Array.from(files).map((file) => uploadImage(file));
+      const urls = await Promise.all(uploadPromises);
+      const validUrls = urls.filter((url): url is string => url !== null);
+
+      setForm((prev) => ({
+        ...prev,
+        images: [...prev.images, ...validUrls],
+      }));
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "Upload failed";
+      setError(errorMessage);
+    } finally {
+      setUploadingAdditional(false);
+      if (additionalFileInputRef.current) {
+        additionalFileInputRef.current.value = "";
+      }
+    }
+  };
+
   const handleRemoveImage = () => {
     setForm((prev) => ({ ...prev, image_url: "" }));
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
+  };
+
+  const handleRemoveAdditionalImage = (index: number) => {
+    setForm((prev) => ({
+      ...prev,
+      images: prev.images.filter((_, i) => i !== index),
+    }));
+  };
+
+  const handleReorderImages = (fromIndex: number, toIndex: number) => {
+    setForm((prev) => {
+      const newImages = [...prev.images];
+      const [removed] = newImages.splice(fromIndex, 1);
+      newImages.splice(toIndex, 0, removed);
+      return { ...prev, images: newImages };
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -127,6 +181,7 @@ export default function ProductForm({ product, categories = [] }: ProductFormPro
         details: form.details || null,
         price: Math.round(parseFloat(form.price) * 100),
         image_url: form.image_url || null,
+        images: form.images.length > 0 ? form.images : null,
         is_featured: form.is_featured,
         stock: parseInt(form.stock) || 0,
         category_id: form.category_id || null,
@@ -301,9 +356,10 @@ export default function ProductForm({ product, categories = [] }: ProductFormPro
         />
       </div>
 
+      {/* Main Product Image */}
       <div>
         <label className="block text-16 font-medium text-brown mb-2">
-          Product Image
+          Main Product Image
         </label>
 
         {form.image_url ? (
@@ -343,7 +399,7 @@ export default function ProductForm({ product, categories = [] }: ProductFormPro
                   <span className="text-brown">Uploading...</span>
                 ) : (
                   <>
-                    <p className="text-16 mb-1">Click to upload an image</p>
+                    <p className="text-16 mb-1">Click to upload main image</p>
                     <p className="text-14">JPEG, PNG, WebP, or GIF (max 5MB)</p>
                   </>
                 )}
@@ -351,12 +407,84 @@ export default function ProductForm({ product, categories = [] }: ProductFormPro
             </label>
           </div>
         )}
+      </div>
 
-        {form.image_url && (
-          <p className="text-14 text-gray-500 mt-2 truncate">
-            {form.image_url}
-          </p>
+      {/* Additional Images */}
+      <div>
+        <label className="block text-16 font-medium text-brown mb-2">
+          Additional Images
+        </label>
+        <p className="text-14 text-gray-500 mb-3">
+          Add more photos to show different angles or details
+        </p>
+
+        {form.images.length > 0 && (
+          <div className="grid grid-cols-4 gap-3 mb-4">
+            {form.images.map((url, index) => (
+              <div key={index} className="relative group">
+                <Image
+                  src={url}
+                  alt={`Additional image ${index + 1}`}
+                  width={100}
+                  height={100}
+                  className="w-full aspect-square rounded-lg object-cover border border-gray-200"
+                />
+                <button
+                  type="button"
+                  onClick={() => handleRemoveAdditionalImage(index)}
+                  className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center hover:bg-red-600 transition-colors text-14"
+                  title="Remove image"
+                >
+                  ×
+                </button>
+                <div className="absolute bottom-1 left-1 right-1 flex justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  {index > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => handleReorderImages(index, index - 1)}
+                      className="bg-white/90 text-brown rounded px-2 py-0.5 text-12 hover:bg-white"
+                    >
+                      ←
+                    </button>
+                  )}
+                  {index < form.images.length - 1 && (
+                    <button
+                      type="button"
+                      onClick={() => handleReorderImages(index, index + 1)}
+                      className="bg-white/90 text-brown rounded px-2 py-0.5 text-12 hover:bg-white"
+                    >
+                      →
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
         )}
+
+        <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
+          <input
+            ref={additionalFileInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/gif"
+            onChange={handleAdditionalImageUpload}
+            className="hidden"
+            id="additional-images-upload"
+            multiple
+          />
+          <label
+            htmlFor="additional-images-upload"
+            className={`cursor-pointer ${uploadingAdditional ? "pointer-events-none" : ""}`}
+          >
+            <div className="text-gray-500">
+              {uploadingAdditional ? (
+                <span className="text-brown">Uploading...</span>
+              ) : (
+                <p className="text-14">Click to add more images</p>
+              )}
+            </div>
+          </label>
+        </div>
       </div>
 
       <div className="flex items-center gap-3">

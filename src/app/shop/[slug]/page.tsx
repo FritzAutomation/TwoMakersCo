@@ -1,9 +1,11 @@
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
-import { getProductBySlug } from "@/lib/supabase/products";
+import { getProductBySlug, getRelatedProducts } from "@/lib/supabase/products";
 import { getProductReviews, getProductRatingStats } from "@/lib/supabase/reviews";
 import ProductDetail from "./ProductDetail";
 import ProductReviews from "@/components/ProductReviews";
+import RelatedProducts from "@/components/RelatedProducts";
+import RecentlyViewed from "@/components/RecentlyViewed";
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>;
@@ -47,9 +49,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
     notFound();
   }
 
-  const [reviews, ratingStats] = await Promise.all([
+  const [reviews, ratingStats, relatedProducts] = await Promise.all([
     getProductReviews(product.id),
     getProductRatingStats(product.id),
+    getRelatedProducts(product.id, product.category_id),
   ]);
 
   const productSchema = {
@@ -95,6 +98,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
             averageRating={ratingStats.average}
             reviewCount={ratingStats.count}
           />
+          <RelatedProducts products={relatedProducts} />
+          <RecentlyViewed excludeProductId={product.id} />
         </div>
       </div>
     </>

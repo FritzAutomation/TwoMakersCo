@@ -75,6 +75,13 @@ export default function UserMenu() {
               </Link>
             )}
             <Link
+              href="/orders"
+              onClick={() => setIsOpen(false)}
+              className="block px-4 py-2 text-16 text-brown hover:bg-cream transition-colors"
+            >
+              My Orders
+            </Link>
+            <Link
               href="/wishlist"
               onClick={() => setIsOpen(false)}
               className="block px-4 py-2 text-16 text-brown hover:bg-cream transition-colors"

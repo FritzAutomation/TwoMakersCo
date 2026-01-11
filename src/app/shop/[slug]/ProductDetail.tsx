@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import Image from "next/image";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import WishlistButton from "@/components/WishlistButton";
+import ImageGallery from "@/components/ImageGallery";
+import { useRecentlyViewed } from "@/hooks/useRecentlyViewed";
 import type { Product } from "@/lib/supabase/products";
 
 interface ProductDetailProps {
@@ -13,8 +14,20 @@ interface ProductDetailProps {
 
 export default function ProductDetail({ product }: ProductDetailProps) {
   const { addItem } = useCart();
+  const { addItem: addToRecentlyViewed } = useRecentlyViewed();
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
+
+  // Track this product as recently viewed
+  useEffect(() => {
+    addToRecentlyViewed({
+      id: product.id,
+      name: product.name,
+      slug: product.slug,
+      price: product.price,
+      image_url: product.image_url,
+    });
+  }, [product.id, product.name, product.slug, product.price, product.image_url, addToRecentlyViewed]);
 
   const formattedPrice = new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -49,31 +62,11 @@ export default function ProductDetail({ product }: ProductDetailProps) {
         </Link>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-          <div className="aspect-square overflow-hidden rounded-lg bg-white border border-brown/10">
-            {product.image_url ? (
-              <Image
-                src={product.image_url}
-                alt={product.name}
-                width={600}
-                height={600}
-                sizes="(max-width: 1024px) 100vw, 50vw"
-                className="h-full w-full object-cover"
-                priority
-              />
-            ) : (
-              <div className="h-full w-full relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-b from-sky-200 via-sky-100 to-transparent" />
-                <div className="absolute top-8 left-16 w-32 h-12 bg-white/80 rounded-full blur-sm" />
-                <div className="absolute bottom-0 left-0 right-0 h-3/4">
-                  <div className="absolute bottom-0 left-[-20%] w-[70%] h-full bg-green-400 rounded-t-full" />
-                  <div className="absolute bottom-0 right-[-10%] w-[60%] h-[90%] bg-green-500 rounded-t-full" />
-                </div>
-                <span className="absolute inset-0 flex items-center justify-center text-white/50 text-lg font-medium">
-                  Product Image
-                </span>
-              </div>
-            )}
-          </div>
+          <ImageGallery
+            mainImage={product.image_url}
+            images={product.images}
+            productName={product.name}
+          />
 
           <div className="flex flex-col">
             <h1 className="text-27 lg:text-35 font-extrabold text-brown mb-2">

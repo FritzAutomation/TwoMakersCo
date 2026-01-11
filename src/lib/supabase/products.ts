@@ -179,3 +179,37 @@ export async function getProductsByCategory(categorySlug: string): Promise<Produ
 
   return data || []
 }
+
+export async function getRelatedProducts(productId: string, categoryId: string | null, limit: number = 4): Promise<Product[]> {
+  const supabase = await createClient()
+
+  // If product has a category, get products from the same category
+  if (categoryId) {
+    const { data, error } = await supabase
+      .from('products')
+      .select('*, category:categories(*)')
+      .eq('category_id', categoryId)
+      .neq('id', productId)
+      .limit(limit)
+      .order('created_at', { ascending: false })
+
+    if (!error && data && data.length > 0) {
+      return data
+    }
+  }
+
+  // Fallback: get random products excluding the current one
+  const { data, error } = await supabase
+    .from('products')
+    .select('*, category:categories(*)')
+    .neq('id', productId)
+    .limit(limit)
+    .order('created_at', { ascending: false })
+
+  if (error) {
+    console.error('Error fetching related products:', error)
+    return []
+  }
+
+  return data || []
+}

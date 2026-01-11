@@ -1,5 +1,6 @@
 import Link from "next/link";
 import ProductCard from "@/components/ProductCard";
+import HomeRecentlyViewed from "@/components/HomeRecentlyViewed";
 import { getFeaturedProducts } from "@/lib/supabase/products";
 
 export default async function Home() {
@@ -41,6 +42,9 @@ export default async function Home() {
           </Link>
         </div>
       </section>
+
+      {/* Recently Viewed */}
+      <HomeRecentlyViewed />
     </div>
   );
 }

@@ -132,6 +132,15 @@ export default function MobileNav() {
             </Link>
 
             <div className="border-t border-brown/20 pt-6 space-y-4">
+              {user && (
+                <Link
+                  href="/orders"
+                  onClick={closeMenu}
+                  className="text-22 text-brown font-medium flex items-center gap-2 hover:opacity-80"
+                >
+                  My Orders
+                </Link>
+              )}
               <Link
                 href="/wishlist"
                 onClick={closeMenu}
